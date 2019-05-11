@@ -11,9 +11,8 @@ import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-
 @SpringUI
-public class ConferenceUI  extends UI {
+public class ConferenceUI extends UI {
 
     @Autowired
     UserService userService;
@@ -21,43 +20,46 @@ public class ConferenceUI  extends UI {
     @Autowired
     ConferenceService conferenceService;
 
+    Component currentSidePanel;
+
+
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-       VerticalLayout mainLayout = new VerticalLayout();
+        VerticalLayout mainLayout = new VerticalLayout();
         Label conference = new Label("Conference");
 
         mainLayout.addComponentsAndExpand(conference);
         setContent(mainLayout);
-        FormLayout formLayout= new FormLayout();
+        FormLayout formLayout = new FormLayout();
 
-        TextField textFieldLogin= new TextField("Login");
+        TextField textFieldLogin = new TextField("Login");
         textFieldLogin.setRequiredIndicatorVisible(true);
         textFieldLogin.setIcon(VaadinIcons.USER);
         textFieldLogin.setMaxLength(20);
 
-        TextField textFieldEmail= new TextField("Email");
+        TextField textFieldEmail = new TextField("Email");
         textFieldEmail.setRequiredIndicatorVisible(true);
         textFieldEmail.setIcon(VaadinIcons.MAILBOX);
         textFieldEmail.setMaxLength(50);
 
-        Button btnSubmit= new Button("Save");
+        Button btnSubmit = new Button("Save");
         formLayout.setWidth(null);
         formLayout.addComponent(textFieldLogin);
         formLayout.addComponent(textFieldEmail);
         formLayout.addComponent(btnSubmit);
         mainLayout.addComponent(formLayout);
 
-        btnSubmit.addClickListener(click-> {
-                    User user = userService.saveUser(
-                            new User(textFieldLogin.getValue(), textFieldEmail.getValue()));
-                    Notification.show("User saved with ID:" + user.getId());
-                    textFieldEmail.clear();
-                    textFieldLogin.clear();
-                    textFieldEmail.setVisible(false);
-                    textFieldLogin.setVisible(false);
-                    btnSubmit.setVisible(false);
-                    mainLayout.addComponentAsFirst(new Label("Welcome fell free to sing up to as many prelessons as you want, unless they collide in time"));
+        btnSubmit.addClickListener(click -> {
+            User user = userService.saveUser(
+                    new User(textFieldLogin.getValue(), textFieldEmail.getValue()));
+            Notification.show("User saved with ID:" + user.getId());
+            textFieldEmail.clear();
+            textFieldLogin.clear();
+            textFieldEmail.setVisible(false);
+            textFieldLogin.setVisible(false);
+            btnSubmit.setVisible(false);
+            mainLayout.addComponentAsFirst(new Label("Welcome " + user.getLogin() + " fell free to sing up to as many prelessons as you want, unless they collide in time"));
 
         });
 
@@ -74,14 +76,31 @@ public class ConferenceUI  extends UI {
         grid.addColumn(Conference::getUsers)
                 .setCaption("size");
 
+        grid.addItemClickListener(itemClick -> {
+            if (currentSidePanel != null) {
+                mainLayout.removeComponent(currentSidePanel);
+            }
+
+            FormLayout formLayout1 = new FormLayout();
+            formLayout1.setWidth(null);
+            formLayout1.addComponent(new Label("Konferencja: " + itemClick.getItem().getName()));
+            Button buttonAddToConf = new Button("Dodaj do tej konferencji");
+            buttonAddToConf.addClickListener(listener -> {
+
+
+            });
+            formLayout1.addComponent(buttonAddToConf);
+
+            mainLayout.addComponent(formLayout1);
+
+            currentSidePanel = formLayout1;
+        });
+
         grid.setItems(conferenceService.getallConferences());
         mainLayout.addComponent(grid);
-
-
-
-       }
-
     }
+
+}
 
 
 

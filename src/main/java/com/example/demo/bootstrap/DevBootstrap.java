@@ -52,6 +52,7 @@ public class DevBootstrap implements ApplicationListener<ContextRefreshedEvent> 
 
         user.getConferences().add(java11Conference);
         java11Conference.getUsers().add(user);
+        user.getConferences().add(java11Conference);
         userRepository.save(user);
         conferenceRepository.save(dockerConference);
         conferenceRepository.save(cloudConference);

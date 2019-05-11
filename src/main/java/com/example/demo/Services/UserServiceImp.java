@@ -15,11 +15,13 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User saveUser(User user) {
-        return repository.save(user);
+        User save = repository.save(user);
+        return save;
     }
 
     @Override
-    public User getUser(Long id) {
+    public User getUser(Long id)
+    {
         return repository.getOne(id);
     }
 

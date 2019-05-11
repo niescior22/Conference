@@ -15,7 +15,9 @@ public class ConferenceServiceImp implements ConferenceService {
 
     @Override
     public Conference saveConference(Conference conference) {
+        conference = conferenceRepository.save(conference);
         return conference;
+
     }
 
     @Override
