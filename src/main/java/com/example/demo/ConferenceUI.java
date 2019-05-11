@@ -86,7 +86,11 @@ public class ConferenceUI extends UI {
             formLayout1.addComponent(new Label("Konferencja: " + itemClick.getItem().getName()));
             Button buttonAddToConf = new Button("Dodaj do tej konferencji");
             buttonAddToConf.addClickListener(listener -> {
-
+                User user = userService.getAllUser().get(userService.getAllUser().size() - 1);
+                user.getConferences().add(itemClick.getItem());
+                itemClick.getItem().getUsers().add(user);
+                userService.uptadeUser(user);
+                conferenceService.updateConference(itemClick.getItem());
 
             });
             formLayout1.addComponent(buttonAddToConf);

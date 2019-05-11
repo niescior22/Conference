@@ -17,7 +17,7 @@ public class User {
     private String login;
     private String email;
 
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER)
     private Set<Conference> conferences = new HashSet<>();
 
     public User(String login, String email) {
