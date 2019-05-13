@@ -6,6 +6,7 @@ import com.example.demo.Services.ConferenceService;
 import com.example.demo.repositories.ConferenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class ConferenceServiceImp implements ConferenceService {
         clickedConference.getUsers().add(user);
         conferenceRepository.save(clickedConference);
     }
-
+     @Transactional
     @Override
     public void removeUserToConference(User user, Conference clickedConference) {
         clickedConference.getUsers().remove(user);

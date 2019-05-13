@@ -7,6 +7,7 @@ import com.example.demo.exceptions.EmailMissmatchException;
 import com.example.demo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -65,11 +66,12 @@ public class UserServiceImp implements UserService {
         user.getConferences().add(clickedConference);
         updateUser(user);
     }
-
+    @Transactional
     @Override
     public void removeUserToConference(User user, Conference clickedConference) {
         user.getConferences().remove(clickedConference);
         userRepository.save(user);
+
     }
 
     private Optional<User> checkUserEmail(String email, Optional<User> optionalUser) {

@@ -63,11 +63,15 @@ public class ConferenceUI extends UI {
         textFieldEmail.setIcon(VaadinIcons.MAILBOX);
         textFieldEmail.setMaxLength(50);
 
+
+
         Button btnSubmit = new Button("Save");
         formLayout.setWidth(null);
         formLayout.addComponent(textFieldLogin);
         formLayout.addComponent(textFieldEmail);
         formLayout.addComponent(btnSubmit);
+
+
 
         gridLayout.addComponent(formLayout, 1, 0);
         gridLayout.setComponentAlignment(formLayout, Alignment.TOP_RIGHT);
@@ -77,9 +81,18 @@ public class ConferenceUI extends UI {
                 Optional<User> optionalUser = userService.tryToSaveUser(textFieldLogin.getValue(), textFieldEmail.getValue());
                 optionalUser.ifPresent(user -> {
                     Notification.show("User saved with ID:" + user.getId());
-                    formLayout.setVisible(false);
+                    textFieldLogin.setVisible(false);
+                    btnSubmit.setCaption("zmien email");
                     currentSessionComponent.setUser(user);
+                    textFieldEmail.clear();
                     verticalLayoutTopLeft.addComponent(new Label("Welcome " + user.getLogin() + " fell free to sing up to as many prelessons as you want, unless they collide in time"));
+                    btnSubmit.addClickListener(clickEvent -> {
+                        User user1 = currentSessionComponent.getUser();
+                        user.setEmail(textFieldEmail.getValue());
+                        userService.updateUser(user1);
+                        textFieldEmail.clear();
+
+                    });
                 });
             } catch (EmailMissmatchException eme) {
                 Notification.show("Error, user exists with different email.");
@@ -112,19 +125,22 @@ public class ConferenceUI extends UI {
 
             Button buttonControl;
             if (clickedConference.getUsers().contains(currentSessionComponent.getUser())) {
-                buttonControl= new Button("Usun mnie z konfy");
+                buttonControl = new Button("Usun mnie z konfy");
                 buttonControl.addClickListener(listener -> {
                     User user = currentSessionComponent.getUser();
-                    userService.removeUserToConference(user, clickedConference);
                     conferenceService.removeUserToConference(user, clickedConference);
+                    userService.removeUserToConference(user, clickedConference);
+                    Notification.show("anulowałes rezerwacje na konference " + clickedConference.getName());
                 });
             } else {
-                buttonControl= new Button("Dodaj do tej konferencji");
-                buttonControl.setEnabled(clickedConference.getUsers().size() < 5);
+                User user = currentSessionComponent.getUser();
+                buttonControl = new Button("Dodaj do tej konferencji");
+                buttonControl.setEnabled(clickedConference.getUsers().size() < 5 && !isConferenceinSameTime(user, clickedConference));
                 buttonControl.addClickListener(listener -> {
-                    User user = currentSessionComponent.getUser();
+                    // User user = currentSessionComponent.getUser();
                     userService.addUserToConference(user, clickedConference);
                     conferenceService.addUserToConference(user, clickedConference);
+                    Notification.show("Zarezerwowałes mniejsce na konferencji :" + clickedConference.getName());
                 });
             }
 
@@ -152,7 +168,19 @@ public class ConferenceUI extends UI {
         gridLayout.addComponent(grid, 0, 1);
     }
 
-}
+    private boolean isConferenceinSameTime(User user, Conference clickedConference) {
+        for (Conference conference1 : user.getConferences()) {
+            if ((conference1.getDate().isEqual(clickedConference.getDate())) && (conference1.getStartTime().equalsIgnoreCase(clickedConference.getStartTime()))) {
+                return true;
+            }
+        }
+            return false;
+
+        }
+    }
+
+
+
 
 
 

@@ -25,4 +25,6 @@ public interface UserService {
     void addUserToConference(User user, Conference clickedConference);
 
     void removeUserToConference(User user, Conference clickedConference);
+
+
 }

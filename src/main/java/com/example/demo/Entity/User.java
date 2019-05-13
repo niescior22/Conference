@@ -1,6 +1,8 @@
 package com.example.demo.Entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -11,12 +13,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    @NotNull
     private String login;
+    @Email
     private String email;
 
-    @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER )
     private Set<Conference> conferences = new HashSet<>();
+
+
 
     public User(String login, String email) {
         this.login = login;

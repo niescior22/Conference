@@ -2,9 +2,8 @@ package com.example.demo.Entity;
 
 
 
-import com.example.demo.Entity.User;
-
 import javax.persistence.*;
+
 import java.time.LocalDate;
 import java.util.*;
 
@@ -15,6 +14,7 @@ public class Conference {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO )
     private  Long id;
+
 
     private String name;
 
@@ -27,7 +27,7 @@ public class Conference {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_conference",joinColumns = @JoinColumn(name = "conference_id"),inverseJoinColumns = @JoinColumn(name ="user_id"))
-    private Set<com.example.demo.Entity.User>users= new LinkedHashSet<>();
+    private Set<User>users= new LinkedHashSet<>();
 
 
     public Conference() {
