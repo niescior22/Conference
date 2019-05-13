@@ -17,4 +17,8 @@ public interface ConferenceService {
     Conference updateConference(Conference conference);
 
     long countConference();
+
+    void addUserToConference(User user, Conference clickedConference);
+
+    void removeUserToConference(User user, Conference clickedConference);
 }

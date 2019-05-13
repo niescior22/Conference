@@ -1,7 +1,5 @@
 package com.example.demo.Entity;
 
-import org.hibernate.annotations.Fetch;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Objects;

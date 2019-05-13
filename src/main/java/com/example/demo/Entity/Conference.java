@@ -2,7 +2,8 @@ package com.example.demo.Entity;
 
 
 
-import javax.jws.soap.SOAPBinding;
+import com.example.demo.Entity.User;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -26,13 +27,13 @@ public class Conference {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_conference",joinColumns = @JoinColumn(name = "conference_id"),inverseJoinColumns = @JoinColumn(name ="user_id"))
-    private Set<User>users= new LinkedHashSet<>();
+    private Set<com.example.demo.Entity.User>users= new LinkedHashSet<>();
 
 
     public Conference() {
     }
 
-    public Conference(String name, LocalDate date, String startTime, String endTime, Set<User> users) {
+    public Conference(String name, LocalDate date, String startTime, String endTime, Set<com.example.demo.Entity.User> users) {
         this.name = name;
         this.date = date;
         this.startTime = startTime;
@@ -87,11 +88,11 @@ public class Conference {
         this.endTime = endTime;
     }
 
-    public Set<User> getUsers() {
+    public Set<com.example.demo.Entity.User> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(Set<com.example.demo.Entity.User> users) {
         this.users = users;
     }
     public int Setsize(Set<User> users){

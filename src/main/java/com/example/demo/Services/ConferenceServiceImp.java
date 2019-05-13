@@ -1,6 +1,8 @@
 package com.example.demo.Services;
 
 import com.example.demo.Entity.Conference;
+import com.example.demo.Entity.User;
+import com.example.demo.Services.ConferenceService;
 import com.example.demo.repositories.ConferenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,5 +45,17 @@ public class ConferenceServiceImp implements ConferenceService {
     @Override
     public long countConference() {
         return conferenceRepository.count();
+    }
+
+    @Override
+    public void addUserToConference(User user, Conference clickedConference) {
+        clickedConference.getUsers().add(user);
+        conferenceRepository.save(clickedConference);
+    }
+
+    @Override
+    public void removeUserToConference(User user, Conference clickedConference) {
+        clickedConference.getUsers().remove(user);
+        conferenceRepository.save(clickedConference);
     }
 }
