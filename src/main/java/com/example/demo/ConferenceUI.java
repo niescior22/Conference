@@ -10,6 +10,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
@@ -28,6 +29,8 @@ public class ConferenceUI extends UI {
     private CurrentSessionComponent currentSessionComponent;
 
     Component currentSidePanel;
+
+    public final static Logger log = Logger.getLogger(ConferenceUI.class);
 
 
     @Override
@@ -81,12 +84,15 @@ public class ConferenceUI extends UI {
                 Optional<User> optionalUser = userService.tryToSaveUser(textFieldLogin.getValue(), textFieldEmail.getValue());
                 optionalUser.ifPresent(user -> {
                     Notification.show("User saved with ID:" + user.getId());
+                    log.info("User saved with ID:" + user.getId());
                     textFieldLogin.setVisible(false);
                     btnSubmit.setCaption("zmien email");
                     currentSessionComponent.setUser(user);
                     textFieldEmail.clear();
                     verticalLayoutTopLeft.addComponent(new Label("Welcome " + user.getLogin() + " fell free to sing up to as many prelessons as you want, unless they collide in time"));
                     btnSubmit.addClickListener(clickEvent -> {
+                        Notification.show("Email changed sucesfully "+user.getEmail());
+                        log.info("user email changed to "+ user.getEmail());
                         User user1 = currentSessionComponent.getUser();
                         user.setEmail(textFieldEmail.getValue());
                         userService.updateUser(user1);
@@ -95,7 +101,7 @@ public class ConferenceUI extends UI {
                     });
                 });
             } catch (EmailMissmatchException eme) {
-                Notification.show("Error, user exists with different email.");
+                Notification.show("Podany login jest juz zajęty");
             }
         });
 
@@ -124,28 +130,35 @@ public class ConferenceUI extends UI {
             conferenceGrid.addComponent(new Label("Konferencja: " + itemClick.getItem().getName()), 0, 0);
 
             Button buttonControl;
-            if (clickedConference.getUsers().contains(currentSessionComponent.getUser())) {
-                buttonControl = new Button("Usun mnie z konfy");
-                buttonControl.addClickListener(listener -> {
+            try {
+
+
+                if (clickedConference.getUsers().contains(currentSessionComponent.getUser())) {
+                    buttonControl = new Button("Usun mnie z konfy");
+                    buttonControl.addClickListener(listener -> {
+                        User user = currentSessionComponent.getUser();
+                        userService.removeUserToConference(user, clickedConference);
+                        conferenceService.removeUserToConference(user, clickedConference);
+                        Notification.show("anulowałes rezerwacje na konference " + clickedConference.getName());
+                    });
+                } else {
                     User user = currentSessionComponent.getUser();
-                    userService.removeUserToConference(user, clickedConference);
-                    conferenceService.removeUserToConference(user, clickedConference);
-                    Notification.show("anulowałes rezerwacje na konference " + clickedConference.getName());
-                });
-            } else {
-                User user = currentSessionComponent.getUser();
-                buttonControl = new Button("Dodaj do tej konferencji");
-                buttonControl.setEnabled(clickedConference.getUsers().size() < 5 && !isConferenceinSameTime(user, clickedConference));
-                buttonControl.addClickListener(listener -> {
-                    // User user = currentSessionComponent.getUser();
-                    userService.addUserToConference(user, clickedConference);
-                    conferenceService.addUserToConference(user, clickedConference);
-                    Notification.show("Zarezerwowałes mniejsce na konferencji :" + clickedConference.getName());
-                });
-            }
+                    buttonControl = new Button("Dodaj do tej konferencji");
+                    buttonControl.setEnabled(clickedConference.getUsers().size() < 5 && !isConferenceinSameTime(user, clickedConference));
+                    buttonControl.addClickListener(listener -> {
+                        // User user = currentSessionComponent.getUser();
+                        userService.addUserToConference(user, clickedConference);
+                        conferenceService.addUserToConference(user, clickedConference);
+                        Notification.show("Zarezerwowałes mniejsce na konferencji :" + clickedConference.getName());
+                    });
+                }
 
             conferenceGrid.addComponent(new Label("Zajętość konferencji: (" + clickedConference.getUsers().size() + "/5)"), 0, 1);
             conferenceGrid.addComponent(buttonControl, 0, 2);
+
+        } catch (NullPointerException e){
+            Notification.show("zaloguj się by zapisac na prelekcje");
+        }
             Grid<User> registeredUsersGrid = new Grid<>();
 
             registeredUsersGrid.addColumn(User::getLogin)
@@ -169,6 +182,7 @@ public class ConferenceUI extends UI {
     }
 
     private boolean isConferenceinSameTime(User user, Conference clickedConference) {
+
         for (Conference conference1 : user.getConferences()) {
             if ((conference1.getDate().isEqual(clickedConference.getDate())) && (conference1.getStartTime().equalsIgnoreCase(clickedConference.getStartTime()))) {
                 return true;
