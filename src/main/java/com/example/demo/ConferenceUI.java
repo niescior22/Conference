@@ -91,11 +91,11 @@ public class ConferenceUI extends UI {
                     textFieldEmail.clear();
                     verticalLayoutTopLeft.addComponent(new Label("Welcome " + user.getLogin() + " fell free to sing up to as many prelessons as you want, unless they collide in time"));
                     btnSubmit.addClickListener(clickEvent -> {
-                        Notification.show("Email changed sucesfully "+user.getEmail());
                         log.info("user email changed to "+ user.getEmail());
                         User user1 = currentSessionComponent.getUser();
                         user.setEmail(textFieldEmail.getValue());
                         userService.updateUser(user1);
+                        Notification.show("Email changed sucesfully "+user.getEmail());
                         textFieldEmail.clear();
 
                     });
