@@ -51,12 +51,13 @@ public class ConferenceServiceImp implements ConferenceService {
     @Override
     public void addUserToConference(User user, Conference clickedConference) {
         clickedConference.getUsers().add(user);
-        conferenceRepository.save(clickedConference);
+        updateConference(clickedConference);
     }
      @Transactional
     @Override
     public void removeUserToConference(User user, Conference clickedConference) {
         clickedConference.getUsers().remove(user);
-        conferenceRepository.save(clickedConference);
+        updateConference(clickedConference);
+
     }
 }

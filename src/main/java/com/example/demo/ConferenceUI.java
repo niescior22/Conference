@@ -128,8 +128,8 @@ public class ConferenceUI extends UI {
                 buttonControl = new Button("Usun mnie z konfy");
                 buttonControl.addClickListener(listener -> {
                     User user = currentSessionComponent.getUser();
-                    conferenceService.removeUserToConference(user, clickedConference);
                     userService.removeUserToConference(user, clickedConference);
+                    conferenceService.removeUserToConference(user, clickedConference);
                     Notification.show("anulowałes rezerwacje na konference " + clickedConference.getName());
                 });
             } else {

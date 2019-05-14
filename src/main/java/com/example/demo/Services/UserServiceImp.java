@@ -5,6 +5,7 @@ import com.example.demo.Entity.User;
 import com.example.demo.Services.UserService;
 import com.example.demo.exceptions.EmailMissmatchException;
 import com.example.demo.repositories.UserRepository;
+import org.hibernate.sql.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,7 +71,7 @@ public class UserServiceImp implements UserService {
     @Override
     public void removeUserToConference(User user, Conference clickedConference) {
         user.getConferences().remove(clickedConference);
-        userRepository.save(user);
+        updateUser(user);
 
     }
 
